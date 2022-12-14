@@ -1,0 +1,55 @@
+version: '2'
+
+networks:
+  ros:
+    driver: bridge
+
+services:
+
+  ros-master:
+    image: ros:noetic-ros-core
+    #network_mode: "host"
+    ports:
+      - 11311:11311
+    command: roscore
+    networks:
+      - ros
+
+  sender:
+    image: sender:latest
+    depends_on:
+      - ros-master
+    environment:
+      - "ROS_MASTER_URI=http://ros-master:11311"
+    command: /bin/bash -c 'source /opt/ros/noetic/setup.bash && python3 /home/ros/sender.py'
+    working_dir: /home/ros
+    networks:
+      - ros
+
+  receiver:
+    image: receiver:latest
+    depends_on:
+      - sender
+    environment:
+      - "ROS_MASTER_URI=http://ros-master:11311"
+    command: /bin/bash -c 'source /opt/ros/noetic/setup.bash && python3 /home/ros/receiver.py'
+    working_dir: /home/ros
+    volumes:
+      - /var/log/ros:/home/ros/log
+    networks:
+      - ros
+
+  #bettercap:
+  #  image: bettercap/bettercap
+  #  networks:
+  #    - ros
+
+  fuzzer:
+    image: fuzzer:latest
+    command: '/usr/sbin/sshd -D'
+    privileged: true
+    ports:
+      - "11322:22"
+      - "26000:26000"
+    networks:
+      - ros
