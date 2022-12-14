@@ -46,6 +46,8 @@ services:
 
   fuzzer:
     image: fuzzer:latest
+    environment:
+      - "ROS_MASTER_URI=http://ros-master:11311"
     command: '/usr/sbin/sshd -D'
     privileged: true
     ports:

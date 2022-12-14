@@ -15,10 +15,8 @@ RUN pip install boofuzz
 RUN . /opt/ros/noetic/setup.sh && python3.9 -m pip install fuzzingbook==1.1 grammar
 
 # Copy custom scripts and adapt privileges
-COPY boofuzz.py /home/ws/test_boofuzz.py
-RUN chown ws:ws /home/ws/test_boofuzz.py && chmod +x /home/ws/test_boofuzz.py
-COPY ettercap.sh /home/ws/
 COPY Rachel.py /home/ws
-COPY Rachel.sh /home/ws
 COPY grammar.py /home/ws
-RUN chown ws:ws /home/ws/ettercap.sh /home/ws/Rachel.py /home/ws/Rachel.sh /home/ws/grammar.py && chmod +x /home/ws/ettercap.sh /home/ws/Rachel.sh
+RUN chown ws:ws /home/ws/Rachel.py /home/ws/grammar.py 
+RUN echo source /opt/ros/noetic/setup.bash >> /home/ws/.bashrc
+RUN echo export ROS_MASTER_URI=http://ros-master:11311 >> /home/ws/.bashrc

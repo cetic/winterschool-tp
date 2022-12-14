@@ -23,6 +23,15 @@ flowchart RL;
     id12((User)) -- ssh --> id11;
     end;
 ```
+```mermaid
+flowchart RL;
+    subgraph containers;
+    id7(ros network) --- id8[Leader];
+    id7 --- id9[ros-master];
+    id7 --- id10[Follower];
+    end;
+```
+
 ## Description
 Sender and receiver communicates using the ROS protocol. They exchanged a json stringlified containing 3 objects : 
  - Acceleration
