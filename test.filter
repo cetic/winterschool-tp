@@ -1,7 +1,0 @@
-if (ip.dst == '172.18.0.5') {
-    msg("Message to receiver\n");
-    if (search(DECODED.data, "Comment")) {
-        msg("  ROS message received\n");
-        DATA.data+43 = "\x33";
-    }
-}

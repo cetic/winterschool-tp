@@ -1,17 +1,37 @@
-# WinterSchool TP fuzzing
+# Fuzzing Exercise made for the Winter School Cyberwal in Galaxia
 
-## Meeting Notes
+The website of the school (https://cyberwalingalaxia.be/dashboard/) will provide the support of the lessons.
 
-Plan : 
- - Intro 
-   - Explication Use Case 
- - 2 niveaux : 
-   - Fuzzing json sans protection 
-     - fuzzer niveau string devrait trouver les erreurs
-   - Fuzzing json avec certaines protection 
-     - demande un fuzzer + évolué avec une grammaire
+The support of the exercise will also be available there and a copy is available in the repo.
+
+It is the second exercise of the 2 presented with the idea to go from certification to fuzzing test techniques.
+
+# First 
+
+The other part of the exercices is in a separate repo : https://github.com/cetic/certif-tp
 
 ## Scheme  
+
+The exercise is based on a communication between 2 vehicles making a platoon and based on the Robot Operating System v1 Noetic : https://www.ros.org .
+
+```mermaid
+flowchart RL;
+    subgraph containers;
+    id7(ros network) --- id8[Leader];
+    id7 --- id9[ros-master];
+    id7 --- id10[Follower];
+    end;
+```
+
+The idea is to make different fuzzing tests on the communication between the 2 vehicles.
+
+## Setup
+
+To set-up the environment, you can directly use the Dockerfile/Docker-compose file or directly use the Virtual Machine (ova file) provided [here](https://drive.google.com/drive/folders/1wknAG07w7pQ9p1FiZ4O7q6dyjJpGx3pF?usp=sharing). This machine can be imported in virtualbox or VMware.
+
+For the docker version, simply build all the docker file then launch the docker-compose or use the launchTP.sh file.
+
+the result will be a setup as described below with the sender representing the Leader car, the receiver representing the Follower car and a third container which can be accessed through SSH and contain all the tools necessary.
 
 ```mermaid
 flowchart RL;
@@ -23,45 +43,4 @@ flowchart RL;
     id12((User)) -- ssh --> id11;
     end;
 ```
-```mermaid
-flowchart RL;
-    subgraph containers;
-    id7(ros network) --- id8[Leader];
-    id7 --- id9[ros-master];
-    id7 --- id10[Follower];
-    end;
-```
-
-## Description
-Sender and receiver communicates using the ROS protocol. They exchanged a json stringlified containing 3 objects : 
- - Acceleration
- - Direction
- - Comment
-
-### Sender
-The sender generates random information for the Acceleration and Direction object.
-The Comment object contains the Flag to catch when the communication is successfully spied.
-
-### Receiver
-The receiver process the json and outputs the received info in /var/log/ros/test.log using a shared volume on the machine.
-It also processes the Direction object to make computation : it adds the received direction to a global saved direction.
-
-### Fuzzer
-The fuzzer is a container reachable through ssh on port 11322 and containing the necessary tools for the exercise.
-It currently contains : 
- - ettercap
- - boofuzz
- - nano
- - ip-utils
- - nmap
- - tcpdump
-
- It has a ws user created with a defined password (see protected variable).
-The command for the ssh connection is 
-```bash 
-ssh -p 11322 ws@[the ip address of the host machine]
-```
-
-An ettercap script was added for test that detects the sender and receiver internal addresses and make the man in the middle attack.
-Currently it is define to use the test.filterfile as filter which will modify the messgae sent to the receiver.
 
